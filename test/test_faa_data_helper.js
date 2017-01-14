@@ -7,18 +7,29 @@
 	var FAADataHelper = require('../faa_data_helper');
 	chai.config.includeStack = true;
 
-describe('FAADataHelper', function() {
-  var subject = new FAADataHelper();
-  var airportCode;
-    describe('#getAirportStatus', function(){
-      it('returns matching airpot code', function () {
-        airportCode = 'SFO';
+  describe('FAADataHelper', function() {
 
-        var value = subject.requestAirportStatus(airportCode).then(function(object) {
-          return object.IATA;
-        });
+	  var subject = new FAADataHelper();
 
-        expect(value).to.eventually.eq(airportCode)
+	  var airport_code;
+
+	  describe('#getAirportStatus', function() {
+
+	    context('with a valid airport code', function() {
+	      it('returns matching airport code', function() {
+	        airport_code = 'SFO';
+	         var value = subject.requestAirportStatus(airport_code).then(function(obj) {
+	          return obj.IATA;
+	        });
+	        return expect(value).to.eventually.eq(airport_code);
+	      });
+	    });
+      context('with a incorrect airport code', function(){
+        it('returns error code', function(){
+          airport_code = 'oxted';
+          return expect(subject.requestAirportStatus(airport_code)).to.be.rejectedWith(Error);
+        })
       })
-    })
-});
+	  });
+
+	});
